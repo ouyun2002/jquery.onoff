@@ -1,12 +1,12 @@
 # On-Off Toggle Switch
 
-[![Build Status](https://travis-ci.org/timmywil/jquery.onoff.png?branch=master)](https://travis-ci.org/timmywil/jquery.onoff)
+[![Build Status](https://travis-ci.org/ouyun2002/jquery.onoff.svg?branch=master)](https://travis-ci.org/ouyun2002/jquery.onoff)
 
 > Interactive, accessible toggle switches for the web
 
 Transform checkboxes into toggle switches.
 
-[![Toggle Switch](http://f.cl.ly/items/2P1i0A1N1v003A1O3S2Q/Screen%20Shot%202014-01-15%20at%202.54.24%20PM.png)](http://timmywil.github.io/jquery.onoff/)
+[![Toggle Switch](http://f.cl.ly/items/2P1i0A1N1v003A1O3S2Q/Screen%20Shot%202014-01-15%20at%202.54.24%20PM.png)](https://github.com/ouyun2002/jquery.onoff/)
 
 Toggle switches made for the web are often solely constructed
 to change when clicked or tapped,
@@ -30,9 +30,9 @@ Pointer, touch, and mouse events are supported.
 
 Download the [production version][min] (4kb) or the [development version][max] and grab the [CSS][css].
 
-[min]: https://raw.github.com/timmywil/jquery.onoff/0.3.4/dist/jquery.onoff.min.js
-[max]: https://raw.github.com/timmywil/jquery.onoff/0.3.4/dist/jquery.onoff.js
-[css]: https://raw.github.com/timmywil/jquery.onoff/0.3.4/dist/jquery.onoff.css
+[min]: https://raw.githubusercontent.com/ouyun2002/jquery.onoff/master/dist/jquery.onoff.js
+[max]: https://raw.githubusercontent.com/ouyun2002/jquery.onoff/master/dist/jquery.onoff.js
+[css]: https://raw.githubusercontent.com/ouyun2002/jquery.onoff/master/dist/jquery.onoff.css
 
 ### With AMD
 
