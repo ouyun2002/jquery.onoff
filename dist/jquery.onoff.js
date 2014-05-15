@@ -125,7 +125,8 @@
 			var $con = $elem.parent('.onoffswitch');
 			if (!$con.length) {
 				$elem.wrap('<div class="onoffswitch"></div>');
-				$con = $elem.parent();
+				$con = $elem.parent()
+					.addClass(elem.className.replace(options.className, ''));
 			}
 			this.$con = $con;
 
