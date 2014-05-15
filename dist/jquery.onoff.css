@@ -1,5 +1,3 @@
-@charset "utf-8";
-
 /**
  * onoff.css
  * Author: http://proto.io/freebies/onoff/
@@ -13,6 +11,7 @@
   -ms-user-select: none;
   user-select: none;
 }
+
 .onoffswitch .onoffswitch-checkbox,
 .onoffswitch-checkbox {
   display: none;
@@ -26,21 +25,22 @@
   border-radius: 4px;
   margin: 0px;
 }
-.onoffswitch-label.deactivate
-{
-	opacity: 0.5;
-	filter: alpha(opacity=30);
-	cursor: default !important;
+
+.onoffswitch-label.deactivate {
+  opacity: 0.5;
+  filter: alpha(opacity=30);
+  cursor: default !important;
 }
-.onoffswitch-label.deactivate .onoffswitch-switch{
-	filter: alpha(opacity=30);
+
+.onoffswitch-label.deactivate .onoffswitch-switch {
+  filter: alpha(opacity=30);
 }
+
 .onoffswitch-inner {
   width: 200%;
   margin-left: -100%;
-  /*
   -webkit-transition: margin 0.2s ease-in;
-  transition: margin 0.2s ease-in;*/
+  transition: margin 0.2s ease-in;
 }
 
 .onoffswitch-inner:before, .onoffswitch-inner:after {
@@ -49,10 +49,12 @@
   width: 50%;
   height: 33px;
   color: white;
-  font: bold 14px/33px Meiryo;
+  font: bold 14px/32px Trebuchet, Arial, sans-serif;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
 
 .onoffswitch-inner:before {
@@ -60,8 +62,9 @@
   padding-left: 10px;
   color: #FFFFFF;
   background-color: #1dade5;
-  background-image: linear-gradient(rgb(23, 162, 216), rgb(29, 173, 229));
-  background-image: -webkit-linear-gradient(rgb(23, 162, 216), rgb(29, 173, 229));
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#17a2d8), to(#1dade5));
+  background-image: linear-gradient(#17a2d8, #1dade5);
+  background-image: -webkit-linear-gradient(#17a2d8, #1dade5);
   background-repeat: repeat-x;
 }
 
@@ -71,10 +74,10 @@
   color: #333333;
   background-color: #EEEEEE;
   text-align: right;
-
-  background-color: rgb(240, 240, 240);
-  background-image: linear-gradient(rgb(230, 230, 230), rgb(255, 255, 255));
-  background-image: -webkit-linear-gradient(rgb(230, 230, 230), rgb(255, 255, 255));
+  background-color: #f0f0f0;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#e6e6e6), to(white));
+  background-image: linear-gradient(#e6e6e6, white);
+  background-image: -webkit-linear-gradient(#e6e6e6, white);
   background-repeat: repeat-x;
 }
 
@@ -82,19 +85,25 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  right: 50%;
-  width: 49%;
+  right: 48px;
+  width: 50px;
   margin: 0px;
-  background: white;
+  background: #e6e6e6;
   border: 1px solid #999999;
-  border-radius: 4px;
-  /*
+  border-radius: 5px;
   -webkit-transition: right 0.2s ease-in, -webkit-box-shadow 0.2s ease-in;
   transition: right 0.2s ease-in, box-shadow 0.2s ease-in;
-  */
-
-  background-color: rgb(230, 230, 230);
-  background-image: linear-gradient(rgb(205, 204, 203), rgb(157, 148, 140));
-  background-image: -webkit-linear-gradient(rgb(205, 204, 203), rgb(157, 148, 140));
+  background-color: #e6e6e6;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#cdcccb), to(#9d948c));
+  background-image: linear-gradient(#cdcccb, #9d948c);
+  background-image: -webkit-linear-gradient(#cdcccb, #9d948c);
   background-repeat: repeat-x;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+  margin-left: 0;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+  right: 0;
 }
