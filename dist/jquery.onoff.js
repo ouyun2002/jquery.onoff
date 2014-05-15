@@ -1,4 +1,4 @@
-/** jquery.onoff - v0.3.4 - 2014-03-26
+/** onoff - v0.1.0 - 2014-01-15
 * https://github.com/timmywil/jquery.onoff
 * Copyright (c) 2014 Timmy Willison; Licensed MIT */
 (function(global, factory) {
@@ -15,60 +15,37 @@
 }(this, function($) {
 	'use strict';
 
-	// Common properties to lift for touch or pointer events
-	var list = 'over out down up move enter leave cancel'.split(' ');
-	var hook = $.extend({}, $.event.mouseHooks);
-	var events = {};
-
-	// Support pointer events in IE11+ if available
-	if ( window.PointerEvent ) {
-		$.each(list, function( i, name ) {
-			// Add event name to events property and add fixHook
-			$.event.fixHooks[
-				(events[name] = 'pointer' + name)
-			] = hook;
-		});
-	} else {
-		var mouseProps = hook.props;
-		// Add touch properties for the touch hook
-		hook.props = mouseProps.concat(['touches', 'changedTouches', 'targetTouches', 'altKey', 'ctrlKey', 'metaKey', 'shiftKey']);
-
+	// Lift touch properties using fixHooks
+	var touchHook = {
+		props: [ 'clientX', 'clientY' ],
 		/**
 		 * Support: Android
-		 * Android sets pageX/Y to 0 for any touch event
-		 * Attach first touch's pageX/pageY and clientX/clientY if not set correctly
+		 * Android sets clientX/Y to 0 for any touch event
+		 * Attach first touch's clientX/Y if not set correctly
 		 */
-		hook.filter = function( event, originalEvent ) {
+		filter: function( event, originalEvent ) {
 			var touch;
-			var i = mouseProps.length;
-			if ( !originalEvent.pageX && originalEvent.touches && (touch = originalEvent.touches[0]) ) {
-				// Copy over all mouse properties
-				while(i--) {
-					event[mouseProps[i]] = touch[mouseProps[i]];
-				}
+			if ( !originalEvent.clientX && originalEvent.touches && (touch = originalEvent.touches[0]) ) {
+				event.clientX = touch.clientX;
+				event.clientY = touch.clientY;
 			}
 			return event;
-		};
-
-		$.each(list, function( i, name ) {
-			// No equivalent touch events for over and out
-			if (i < 2) {
-				events[ name ] = 'mouse' + name;
-			} else {
-				var touch = 'touch' +
-					(name === 'down' ? 'start' : name === 'up' ? 'end' : name);
-				// Add fixHook
-				$.event.fixHooks[ touch ] = hook;
-				// Add event names to events property
-				events[ name ] = touch + ' mouse' + name;
-			}
-		});
-	}
-
-	$.pointertouch = events;
+		}
+	};
+	$.each([ 'touchstart', 'touchmove', 'touchend' ], function( i, name ) {
+		$.event.fixHooks[ name ] = touchHook;
+	});
 
 	var count = 1;
 	var slice = Array.prototype.slice;
+	// Support pointer events if available
+	var pointerEvents = !!window.PointerEvent;
+
+	var ua = navigator.userAgent;
+	var isTablet = ua.indexOf('iPhone') != -1
+					|| ua.indexOf('iPod') != -1
+					|| ua.indexOf('iPad') != -1
+					|| ua.indexOf('Android') != -1;
 
 	/**
 	 * Create an OnOff object for a given element
@@ -133,7 +110,7 @@
 		constructor: OnOff,
 
 		/**
-		 * @returns {OnOff} Returns the instance
+		 * @returns {Panzoom} Returns the instance
 		 */
 		instance: function() {
 			return this;
@@ -145,14 +122,13 @@
 		wrap: function() {
 			var elem = this.elem;
 			var $elem = this.$elem;
-			var options = this.options;
+
 
 			// Get or create elem wrapper
 			var $con = $elem.parent('.onoffswitch');
 			if (!$con.length) {
 				$elem.wrap('<div class="onoffswitch"></div>');
-				$con = $elem.parent()
-					.addClass(elem.className.replace(options.className, ''));
+				$con = $elem.parent();
 			}
 			this.$con = $con;
 
@@ -202,24 +178,33 @@
 		_startMove: function(e) {
 			// Prevent default to avoid touch event collision
 			e.preventDefault();
+
 			var moveType, endType;
-			if (e.type === 'pointerdown') {
+			if (pointerEvents) {
 				moveType = 'pointermove';
 				endType = 'pointerup';
 			} else if (e.type === 'touchstart') {
 				moveType = 'touchmove';
 				endType = 'touchend';
 			} else {
+				if(isTablet) {
+					e.preventDefault();
+					e.stopPropagation();
+					return;
+				}
 				moveType = 'mousemove';
 				endType = 'mouseup';
 			}
+
+
 			var elem = this.elem;
-			var $elem = this.$elem;
 			var ns = this.options.namespace;
 			// Disable transitions
 			var $handle = this.$switch;
 			var handle = $handle[0];
 			var $t = this.$inner.add($handle).css('transition', 'none');
+
+
 
 			// Starting values
 			this.maxRight = this.$con.width() - $handle.width() -
@@ -227,6 +212,8 @@
 				$.css(handle, 'margin-right', true) -
 				$.css(handle, 'border-left-width', true) -
 				$.css(handle, 'border-right-width', true);
+
+
 			var startChecked = elem.checked;
 			this.moved = false;
 			this.startX = e.clientX + (startChecked ? 0 : this.maxRight);
@@ -235,22 +222,29 @@
 			var self = this;
 			var $doc = this.$doc
 				.on(moveType + ns, $.proxy(this._handleMove, this))
-				.on(endType + ns, function() {
+				.on(endType + ns, function(e) {
 					// Reenable transition
 					$t.css('transition', '');
 					$doc.off(ns);
-
 					setTimeout(function() {
 						// If there was a move
 						// ensure the proper checked value
 						if (self.moved) {
 							var checked = self.lastX > (self.startX - self.maxRight / 2);
-							if (elem.checked !== checked) {
+//							elem.checked = self.lastX > (self.startX - self.maxRight / 2);
+
+							if(checked != elem.checked){
 								elem.checked = checked;
-								// Trigger change in case it wasn't already fired
-								$elem.trigger('change');
+								$(elem).trigger('change');
 							}
+						}else if(isTablet){
+							self.triggeredClick = true;
+							var evt = document.createEvent('MouseEvents');
+						    evt.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0,
+						        false, false, true, false, 0, null);
+							self.$label[0].dispatchEvent(evt);
 						}
+
 						// Normalize CSS and animate
 						self.$switch.css('right', '');
 						self.$inner.css('marginLeft', '');
@@ -263,10 +257,32 @@
 		 */
 		_bind: function() {
 			this._unbind();
-			this.$switch.on(
-				$.pointertouch.down,
-				$.proxy(this._startMove, this)
-			);
+			var type = pointerEvents ? 'pointerdown' : 'mousedown touchstart';
+			var self = this;
+
+			this.$switch.unbind(type).on(type, $.proxy(this._startMove, this));
+			if(!isTablet){
+				this.$switch.unbind('click').bind('click', function(e){
+					if (self.disabled) return;
+					if(self.moved){
+						e.preventDefault();
+						return false;
+					}
+				});
+			}else{
+				this.$label.unbind('click touchstart').bind('click', function(e){
+					if(self.triggeredClick && !e.shiftKey){
+						e.preventDefault();
+						return false;
+					}
+				}).bind('touchstart', function(){
+					self.triggeredClick = false;
+				});
+			}
+
+			this.$elem.unbind('change').bind('change', function(){
+				$(this).parents('.switch').trigger('switch-change', {'el': $(this), 'value': $(this).is(':checked')});
+			});
 		},
 
 		/**
@@ -277,13 +293,17 @@
 			this.wrap();
 			this._bind();
 			this.disabled = false;
+			this.$elem.prop('disabled', false);
+			this.$label.removeClass('deactivate');
 		},
 
 		/**
 		 * Unbind all events
 		 */
 		_unbind: function() {
-			this.$doc.add(this.$switch).off(this.options.namespace);
+			var ns = this.options.namespace;
+			this.$doc.off(ns);
+			this.$switch.off(ns);
 		},
 
 		/**
@@ -292,7 +312,9 @@
 		 */
 		disable: function() {
 			this.disabled = true;
+			this.$elem.prop('disabled', true);
 			this._unbind();
+			this.$label.addClass('deactivate');
 		},
 
 		/**
@@ -303,7 +325,7 @@
 			// Destroys this OnOff
 			this.disable();
 			this.$label.remove();
-			this.$elem.unwrap().removeClass(this.options.className);
+			this.$elem.unwrap();
 		},
 
 		/**
@@ -408,6 +430,7 @@
 
 		return this.each(function() { new OnOff(this, options); });
 	};
+
 
 	return ($.OnOff = OnOff);
 }));
