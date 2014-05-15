@@ -119,7 +119,7 @@
 		wrap: function() {
 			var elem = this.elem;
 			var $elem = this.$elem;
-
+			var options = this.options;
 
 			// Get or create elem wrapper
 			var $con = $elem.parent('.onoffswitch');
