@@ -39,7 +39,10 @@
 	var pointerEvents = !!window.PointerEvent;
 
 	var ua = navigator.userAgent;
-	var isTablet = ua.indexOf('iPhone') !== -1 || ua.indexOf('iPod') !== -1 || ua.indexOf('iPad') !== -1 || ua.indexOf('Android') !== -1;
+	var isTablet = ua.indexOf('iPhone') !== -1 ||
+					ua.indexOf('iPod') !== -1 ||
+					ua.indexOf('iPad') !== -1 ||
+					ua.indexOf('Android') !== -1;
 
 	/**
 	 * Create an OnOff object for a given element
@@ -216,7 +219,7 @@
 			var self = this;
 			var $doc = this.$doc
 				.on(moveType + ns, $.proxy(this._handleMove, this))
-				.on(endType + ns, function(e) {
+				.on(endType + ns, function() {
 					// Reenable transition
 					$t.css('transition', '');
 					$doc.off(ns);
@@ -225,17 +228,16 @@
 						// ensure the proper checked value
 						if (self.moved) {
 							var checked = self.lastX > (self.startX - self.maxRight / 2);
-//							elem.checked = self.lastX > (self.startX - self.maxRight / 2);
 
-							if(checked != elem.checked){
+							if(checked !== elem.checked){
 								elem.checked = checked;
 								$(elem).trigger('change');
 							}
 						}else if(isTablet){
 							self.triggeredClick = true;
 							var evt = document.createEvent('MouseEvents');
-						    evt.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0,
-						        false, false, true, false, 0, null);
+							evt.initMouseEvent('click', true, true, window, 1, 0, 0, 0, 0,
+								false, false, true, false, 0, null);
 							self.$label[0].dispatchEvent(evt);
 						}
 
