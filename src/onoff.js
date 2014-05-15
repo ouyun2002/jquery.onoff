@@ -427,6 +427,6 @@
 
 		return this.each(function() { new OnOff(this, options); });
 	};
+
 	return ($.OnOff = OnOff);
 }));
-
