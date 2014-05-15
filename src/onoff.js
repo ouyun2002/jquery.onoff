@@ -39,7 +39,7 @@
 	var pointerEvents = !!window.PointerEvent;
 
 	var ua = navigator.userAgent;
-  	var isTablet = ua.indexOf('iPhone') !== -1 || ua.indexOf('iPod') !== -1 || ua.indexOf('iPad') !== -1 || ua.indexOf('Android') !== -1;
+	var isTablet = ua.indexOf('iPhone') !== -1 || ua.indexOf('iPod') !== -1 || ua.indexOf('iPad') !== -1 || ua.indexOf('Android') !== -1;
 
 	/**
 	 * Create an OnOff object for a given element
